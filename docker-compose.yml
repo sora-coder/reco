@@ -22,7 +22,7 @@ services:
     ports:
       - 13306:3306
     volumes:
-      - .mysql/vol:var/lib/mysql
+      - ./mysql/vol:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
 

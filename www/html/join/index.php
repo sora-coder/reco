@@ -8,18 +8,24 @@ if(!empty($_POST)){
     if($_POST['email'] === ''){
         $error['email'] = 'blank';
     }
+    if(strlen($_post['password']) < 4){
+        $error['password'] = 'length';
+    }
+    if(!preg_match("/[a-zA-Z0-9]/", $_POST['password'])){
+        $error['string'] = 'string';
+    }
     if($_POST['password'] === ''){
         $error['password'] = 'blank';
     }
     $filename = $_FILES['image']['name'];
     if(!empty($filename)){
-        $extension = substr($filename, -3);
+        $extension = substr($filename, -3);
         if($extension != 'jpg' && $extension != 'gif' && $extension != 'png'){
             $error['image'] = 'type';
         }
     }
     if(empty($error)){
-        $image = date(YmdHis) . $_FILES['image']['name'];
+        $image = date('YmdHis') . $_FILES['image']['name'];
         move_uploaded_file($_FILES['image']['tmp_name'], '../user_icon/' . $image);
         $_SESSION['join'] = $_POST;
         $_SESSION['join']['image'] = $image;
@@ -27,11 +33,6 @@ if(!empty($_POST)){
         exit();
     }
 }
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -51,19 +52,46 @@ if(!empty($_POST)){
         <form action="" method="POST" enctype="multipart/form-data">
             <dl>
                 <dt>ニックネーム<span>必須</span></dt>
-                <dd><input type="text" name="name" size35 maxlength="255"></dd>
+                <dd>
+                    <input type="text" name="name" size35 maxlength="255" value="<?php echo htmlspecialchars($_post['name'],ENT_QUOTES) ?>">
+                    <?php if($error['blank']): ?>
+                        <p class="error">※ニックネームを入力してください</p>
+                    <?php endif; ?>
+                </dd>
             </dl>
             <dl>
                 <dt>メールアドレス<span>必須</span></dt>
-                <dd><input type="text" name="email" size="35" maxlength="255"></dd>
+                <dd>
+                    <input type="text" name="email" size="35" maxlength="255" value="<?php echo htmlspecialchars($_post['email'],ENT_QUOTES); ?>">
+                    <?php if($error['blank']): ?>
+                        <p class="error">※メールアドレスを入力してください</p>
+                    <?php endif; ?>
+                </dd>
             </dl>
             <dl>
-                <dt>パスワード</dt>
-                <dd><input type="password" name="password" size="10" maxlength="20"></dd>
+                <dt>パスワード[半角英数字4~20文字]</dt>
+                <dd>
+                    <input type="password" name="password" size="10" maxlength="20" value="<?php echo htmlspecialchars($_POST['password'],ENT_QUOTES); ?>">
+                    <?php if($error['blank']): ?>
+                        <p class="error">※パスワードを入力してください</p>
+                    <?php elseif($error['length']): ?>
+                        <p class="error">※4文字以上で入力してください</p>
+                    <?php elseif($error['string']): ?>
+                        <p class="error">※半角英数字のみで入力してください</p>
+                    <?php endif; ?>
+                </dd>
             </dl>
             <dl>
                 <dt>画像</dt>
-                <dd><input type="file" name="image" size="35"></dd>
+                <dd>
+                    <input type="file" name="image" size="35">
+                    <?php if($error['type']): ?>
+                        <p class="error">※「.jpg」または「.gif」「.png」の画像を指定してください</p>
+                    <?php endif; ?>
+                    <?php if(!empty($error)): ?>
+                        <p class="error">※画像を改めて指定してください</p>
+                    <?php endif; ?>
+                </dd>
             </dl>
             <div>
                 <input type="submit" value="入力内容を確認する">

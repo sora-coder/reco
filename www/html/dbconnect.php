@@ -1,6 +1,6 @@
 <?php
     try{
-        $db = new PDO('mysql:dbname=reco;host=localhost;charset=utf8','root','root');
+        $db = new PDO('mysql:dbname=reco;host=reco_db_1;charset=utf8;unix_socket=/tmp/mysql.sock','root','root');
     }catch(PDOException $e) {
         echo 'DB接続エラー: ' . $e->getMessage();
     }

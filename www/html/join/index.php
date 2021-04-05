@@ -8,7 +8,7 @@ if(!empty($_POST)){
     if($_POST['email'] === ''){
         $error['email'] = 'blank';
     }
-    if(strlen($_post['password']) < 4 && strlen($_POST['password']) > 20){
+    if(strlen($_POST['password']) < 4 || strlen($_POST['password']) > 20){
         $error['password'] = 'length';
     }
     if(!preg_match("/[a-zA-Z0-9]/", $_POST['password'])){
@@ -25,14 +25,21 @@ if(!empty($_POST)){
         }
     }
     if(empty($error)){
-        $image = date('YmdHis') . $_FILES['image']['name'];
-        move_uploaded_file($_FILES['image']['tmp_name'], '../user_icon/' . $image);
         $_SESSION['join'] = $_POST;
-        $_SESSION['join']['image'] = $image;
+        if(!empty($_FILES['image']['name'])){
+            $image = date('YmdHis') . $_FILES['image']['name'];
+            move_uploaded_file($_FILES['image']['tmp_name'], '../user_icon/' . $image);
+            $_SESSION['join']['image'] = $image;
+        }
         header('location: /join/check.php');
         exit();
     }
 }
+if($_GET['action'] === 'rewrite' && isset($_SESSION['join'])){
+    $_POST = $_SESSION['join'];
+}
+var_dump($_POST);
+var_dump($_FILES['image']['name']);
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +60,7 @@ if(!empty($_POST)){
             <dl>
                 <dt>ニックネーム<span>必須</span></dt>
                 <dd>
-                    <input type="text" name="name" size35 maxlength="255" value="<?php echo htmlspecialchars($_post['name'],ENT_QUOTES) ?>">
+                    <input type="text" name="name" size35 maxlength="255" value="<?php echo htmlspecialchars($_POST['name'],ENT_QUOTES) ?>">
                     <?php if($error['name'] === 'blank'): ?>
                         <p class="error">※ニックネームを入力してください</p>
                     <?php endif; ?>
@@ -62,7 +69,7 @@ if(!empty($_POST)){
             <dl>
                 <dt>メールアドレス<span>必須</span></dt>
                 <dd>
-                    <input type="text" name="email" size="35" maxlength="255" value="<?php echo htmlspecialchars($_post['email'],ENT_QUOTES); ?>">
+                    <input type="text" name="email" size="35" maxlength="255" value="<?php echo htmlspecialchars($_POST['email'],ENT_QUOTES); ?>">
                     <?php if($error['email'] === 'blank'): ?>
                         <p class="error">※メールアドレスを入力してください</p>
                     <?php endif; ?>

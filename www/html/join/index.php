@@ -8,14 +8,14 @@ if(!empty($_POST)){
     if($_POST['email'] === ''){
         $error['email'] = 'blank';
     }
-    if($_POST['password'] === ''){
-        $error['password'] = 'blank';
-    }
     if(strlen($_post['password']) < 4 && strlen($_POST['password']) > 20){
         $error['password'] = 'length';
     }
     if(!preg_match("/[a-zA-Z0-9]/", $_POST['password'])){
         $error['password'] = 'string';
+    }
+    if($_POST['password'] === ''){
+        $error['password'] = 'blank';
     }
     $filename = $_FILES['image']['name'];
     if(!empty($filename)){

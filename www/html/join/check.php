@@ -5,6 +5,13 @@ if(!isset($_SESSION['join'])){
     header('location: index.php');
     exit();
 }
+
+if(!empty($_POST)){
+    $profile_Registration = $db->prepare('INSERT INTO users SET name=?, password=?, image=?, email_address=?, created_at=NOW()');
+    $profile_Registration->execute(array($_SESSION['join']['name'], password_hash($_SESSION['join']['password'],PASSWORD_DEFAULT), $_SESSION['join']['image']), $_SESSION['join']['email']);
+    unset($_SESSION['join']);
+    header('join_done.php');
+}
 $password_length = strlen($_SESSION['join']['password']);
 ?>
 

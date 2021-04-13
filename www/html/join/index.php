@@ -1,6 +1,7 @@
 <?php
 session_start();
 require('../dbconnect.php');
+
 if(!empty($_POST)){
     if($_POST['name'] === ''){
         $error['name'] = 'blank';
@@ -35,11 +36,10 @@ if(!empty($_POST)){
         exit();
     }
 }
+
 if($_GET['action'] === 'rewrite' && isset($_SESSION['join'])){
     $_POST = $_SESSION['join'];
 }
-var_dump($_POST);
-var_dump($_FILES['image']['name']);
 ?>
 
 <!DOCTYPE html>

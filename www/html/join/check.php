@@ -12,9 +12,10 @@ if(!empty($_POST)){
         $_SESSION['join']['name'],
         password_hash($_SESSION['join']['password'],PASSWORD_DEFAULT),
         $_SESSION['join']['image'],
-        $_SESSION['join']['email']));
+        $_SESSION['join']['email'])
+    );
     unset($_SESSION['join']);
-    header('join_done.php');
+    header('location: join_done.php');
     exit();
 }
 $password_length = strlen($_SESSION['join']['password']);
@@ -35,6 +36,7 @@ $password_length = strlen($_SESSION['join']['password']);
     <div id="content">
         <p>記入した内容を確認してください</p>
         <form action="" method="post">
+        <input type="hidden" name="action" value="submit">
             <dl>
                 <dt>ニックネーム</dt>
                 <dd>

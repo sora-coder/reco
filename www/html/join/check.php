@@ -8,9 +8,14 @@ if(!isset($_SESSION['join'])){
 
 if(!empty($_POST)){
     $profile_Registration = $db->prepare('INSERT INTO users SET name=?, password=?, image=?, email_address=?, created_at=NOW()');
-    $profile_Registration->execute(array($_SESSION['join']['name'], password_hash($_SESSION['join']['password'],PASSWORD_DEFAULT), $_SESSION['join']['image']), $_SESSION['join']['email']);
+    $profile_Registration->execute(array(
+        $_SESSION['join']['name'],
+        password_hash($_SESSION['join']['password'],PASSWORD_DEFAULT),
+        $_SESSION['join']['image'],
+        $_SESSION['join']['email']));
     unset($_SESSION['join']);
     header('join_done.php');
+    exit();
 }
 $password_length = strlen($_SESSION['join']['password']);
 ?>
@@ -29,7 +34,7 @@ $password_length = strlen($_SESSION['join']['password']);
     </div>
     <div id="content">
         <p>記入した内容を確認してください</p>
-        <form action="" method="POST">
+        <form action="" method="post">
             <dl>
                 <dt>ニックネーム</dt>
                 <dd>

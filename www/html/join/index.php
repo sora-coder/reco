@@ -26,6 +26,14 @@ if(!empty($_POST)){
         }
     }
     if(empty($error)){
+        $user = $db->prepare('SELECT COUNT(*) AS cnt FROM users WHERE email_address=?');
+        $user->execute(array($_POST['email']));
+        $recode = $user->fetch();
+        if($recode['cnt'] > 0){
+            $error['email'] = 'duplicate';
+        }
+    }
+    if(empty($error)){
         $_SESSION['join'] = $_POST;
         if(!empty($_FILES['image']['name'])){
             $image = date('YmdHis') . $_FILES['image']['name'];
@@ -72,6 +80,9 @@ if($_GET['action'] === 'rewrite' && isset($_SESSION['join'])){
                     <input type="text" name="email" size="35" maxlength="255" value="<?php echo htmlspecialchars($_POST['email'],ENT_QUOTES); ?>">
                     <?php if($error['email'] === 'blank'): ?>
                         <p class="error">※メールアドレスを入力してください</p>
+                    <?php endif; ?>
+                    <?php if($error['email'] === 'duplicate'): ?>
+                        <p class="error">※指定されたメールアドレスは、既に登録されています</p>
                     <?php endif; ?>
                 </dd>
             </dl>

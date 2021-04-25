@@ -25,6 +25,7 @@ services:
       - ./mysql/vol:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      TZ: "Asia/Tokyo"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest

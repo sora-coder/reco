@@ -75,6 +75,9 @@
                         <span><?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?></span>
                         <?php if($post['image' !== '']): ?>
                         <img src="user_icon/<?php echo htmlspecialchars($post['image'], ENT_QUOTES), '"'; ?><?php else: ?><img src="icon/default_icon.png" <?php endif; ?> width="30" height="30" alt="<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>"><span class="name">[<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>]</span>
+                        <?php if($post['reply_message_id'] > 0): ?>
+                        <a href="view.php?id="><p><?php echo '>>', htmlspecialchars($post['reply_message_id'], ENT_QUOTES); ?></p></a>
+                        <?php endif; ?>
                         <p white-space="pre-wrap"><?php echo htmlspecialchars($post['message'], ENT_QUOTES); ?></p>
                         <p><span>[<a href="index.php?res=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>">返信</a>]</span><span class="day"><?php htmlspecialchars($post['created'], ENT_QUOTES); ?>[<a href="delete.php?id=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>">削除</a>]</span></p>
                     </div>
@@ -93,7 +96,7 @@
                 <form action="" method="post">
                     <dl>
                         <dt><?php echo htmlspecialchars($user['name'],ENT_QUOTES); ?>さんメッセージを入力してください</dt>
-                        <dt><?php echo htmlspecialchars($reference_message, ENT_QUOTES); ?></dt>
+                        <dt><a href="view.php?id="><?php echo htmlspecialchars($reference_message, ENT_QUOTES); ?></a></dt>
                         <dd>
                             <textarea name="message" cols="50" rows="5"></textarea>
                             <input type="hidden" name="reply_message_id" value="<?php echo htmlspecialchars($_REQUEST['res'], ENT_QUOTES) ?>">

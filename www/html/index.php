@@ -78,7 +78,7 @@
                         <?php if($post['reply_message_id'] > 0): ?>
                         <a href="view.php?id="><p><?php echo '>>', htmlspecialchars($post['reply_message_id'], ENT_QUOTES); ?></p></a>
                         <?php endif; ?>
-                        <p white-space="pre-wrap"><?php echo htmlspecialchars($post['message'], ENT_QUOTES); ?></p>
+                        <p style="white-space:pre-wrap;"><?php echo htmlspecialchars($post['message'], ENT_QUOTES); ?></p>
                         <p><span>[<a href="index.php?res=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>">返信</a>]</span><span class="day"><?php htmlspecialchars($post['created'], ENT_QUOTES); ?>[<a href="delete.php?id=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>">削除</a>]</span></p>
                     </div>
                 <?php endforeach; ?>
@@ -95,8 +95,12 @@
             <div class="add_post">
                 <form action="" method="post">
                     <dl>
-                        <dt><?php echo htmlspecialchars($user['name'],ENT_QUOTES); ?>さんメッセージを入力してください</dt>
-                        <dt><a href="view.php?id="><?php echo htmlspecialchars($reference_message, ENT_QUOTES); ?></a></dt>
+                        <?php if($_REQUEST['res'] !== ''): ?>
+                        <dt>返信メーセージを入力してください</dt>
+                        <?php else: ?>
+                        <dt><新しいメッセージを入力してください</dt>
+                        <?php endif; ?>
+                        <dt style="white-space:pre-wrap;"><a href="view.php?id="><?php echo htmlspecialchars($reference_message, ENT_QUOTES); ?></a></dt>
                         <dd>
                             <textarea name="message" cols="50" rows="5"></textarea>
                             <input type="hidden" name="reply_message_id" value="<?php echo htmlspecialchars($_REQUEST['res'], ENT_QUOTES) ?>">

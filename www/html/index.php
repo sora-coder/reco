@@ -39,7 +39,7 @@
     $page = max($page, 1);
     $page = min($page, $maxpage);
     $start = ($page - 1) * 5;
-    $posts = $db->prepare('SELECT * FROM (SELECT u.name, u.image, m.* FROM users u, message m WHERE u.id=m.user_id  ORDER BY m.created DESC LIMIT ?, 5) AS A ORDER BY created');
+    $posts = $db->prepare('SELECT * FROM (SELECT u.name, u.image, m.* FROM users u, message m WHERE u.id=m.user_id  ORDER BY m.id DESC LIMIT ?, 5) AS A ORDER BY id');
     $posts->bindParam(1, $start, PDO::PARAM_INT);
     $posts->execute();
 
@@ -49,6 +49,8 @@
         $table = $response->fetch();
         $reference_message = '>>' . $table['id'] . '.  ' . $table['message'] . '(' . $table['name'] . ')';
     }
+
+    $confirmation_tab = "width=400, height=300, scrollbars=yes, noopener=yes";
     //     ini_set('display_errors', 1);
     // $db->setAttribute(pdo::ATTR_ERRMODE,pdo::ERRMODE_EXCEPTION);
     // $db->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
@@ -69,7 +71,7 @@
             <h1>reco</h1>
         </header>
         <div id="content">
-        <div class="linear-navigation">
+            <div class="linear-navigation">
                 <?php if($page < $maxpage): ?>
                 <a href="index.php?page=<?php echo htmlspecialchars($page + 1, ENT_QUOTES); ?>">前へ</a>
                 <?php endif; ?>
@@ -82,32 +84,39 @@
                 <?php foreach($posts as $post): ?>
                     <div class="message">
                         <span><?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?></span>
-                        <?php if($post['image' !== '']): ?>
-                        <img src="user_icon/<?php echo htmlspecialchars($post['image'], ENT_QUOTES), '"'; ?><?php else: ?><img src="icon/default_icon.png" <?php endif; ?> width="30" height="30" alt="<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>"><span class="name">[<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>]</span><span class="day">&emsp;<?php echo htmlspecialchars($post['created'], ENT_QUOTES); ?></span>
-                        <?php if($post['reply_message_id'] > 0): ?>
-                        <a href="view.php?id="><p><?php echo '>>', htmlspecialchars($post['reply_message_id'], ENT_QUOTES); ?></p></a>
-                        <?php endif; ?>
-                        <p style="white-space:pre-wrap;"><?php echo htmlspecialchars($post['message'], ENT_QUOTES); ?></p>
-                        <p><span>[<a href="index.php?res=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>">返信</a>]</span><span class="day"><?php htmlspecialchars($post['created'], ENT_QUOTES); ?>[<a href="delete.php?id=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>">削除</a>]</span></p>
-                        <?php if($post['id'] === $table['id']): ?>
-                            <div class="add_post">
-                                <form action="" method="post">
-                                    <dl>
-                                        <dt>返信メーセージを入力してください</dt>
-                                        <dt style="white-space:pre-wrap;"><a href="view.php?id="><?php echo htmlspecialchars($reference_message, ENT_QUOTES); ?></a></dt>
-                                        <dd>
-                                            <textarea name="message" cols="50" rows="5"></textarea>
-                                            <input type="hidden" name="reply_message_id" value="<?php echo htmlspecialchars($_REQUEST['res'], ENT_QUOTES) ?>">
-                                        </dd>
-                                    </dl>
-                                    <div>
-                                        <input type="submit" value="返信する">
-                                    </div>
-                                </form>
-                                <form action="index.php">
-                                    <input type="submit" value="返信をやめる">
-                                </form>
-                            </div>
+                        <?php if($post['deleted'] === '0'): ?>
+                            <?php if($post['image' !== '']): ?>
+                                <img src="user_icon/<?php echo htmlspecialchars($post['image'], ENT_QUOTES), '"'; ?><?php else: ?><img src="icon/default_icon.png" <?php endif; ?> width="30" height="30" alt="<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>"><span class="name">[<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>]</span><span class="day">&emsp;<?php echo htmlspecialchars($post['created'], ENT_QUOTES); ?></span>
+                            <?php if($post['reply_message_id'] > 0): ?>
+                                <a href="view.php?id="><p><?php echo '>>', htmlspecialchars($post['reply_message_id'], ENT_QUOTES); ?></p></a>
+                            <?php endif; ?>
+                            <p style="white-space:pre-wrap;"><?php echo htmlspecialchars($post['message'], ENT_QUOTES); ?></p>
+                            <p><span>[<a href="index.php?res=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>">返信</a>]</span>
+                            <?php if($_SESSION['id'] === $post['user_id']): ?>
+                                <span class="day"><?php htmlspecialchars($post['created'], ENT_QUOTES); ?>[<a href="delete.php?id=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>" onclick="window.open(this, '削除', <?php $confirmation_tab; ?>)return false;">削除</a>]</span></p>
+                            <?php endif ?>
+                            <?php if($post['id'] === $table['id']): ?>
+                                <div class="add_post">
+                                    <form action="" method="post">
+                                        <dl>
+                                            <dt>返信メーセージを入力してください</dt>
+                                            <dt style="white-space:pre-wrap;"><a href="view.php?id="><?php echo htmlspecialchars($reference_message, ENT_QUOTES); ?></a></dt>
+                                            <dd>
+                                                <textarea name="message" cols="50" rows="5"></textarea>
+                                                <input type="hidden" name="reply_message_id" value="<?php echo htmlspecialchars($_REQUEST['res'], ENT_QUOTES) ?>">
+                                            </dd>
+                                        </dl>
+                                        <div>
+                                            <input type="submit" value="返信する">
+                                        </div>
+                                    </form>
+                                    <form action="index.php">
+                                        <input type="submit" value="返信をやめる">
+                                    </form>
+                                </div>
+                            <?php endif; ?>
+                        <?php elseif($post['deleted'] === '1'): ?>
+                            <p>[削除されました]</p>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>

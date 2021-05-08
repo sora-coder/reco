@@ -43,19 +43,14 @@
     $posts->bindParam(1, $start, PDO::PARAM_INT);
     $posts->execute();
 
+    $_SESSION['page'] = $page;
+
     if(isset($_REQUEST['res'])){
         $response = $db->prepare('SELECT u.name, u.image, m.* FROM users u, message m WHERE u.id=m.user_id AND m.id=?');
         $response->execute(array($_REQUEST['res']));
         $table = $response->fetch();
         $reference_message = '>>' . $table['id'] . '.  ' . $table['message'] . '(' . $table['name'] . ')';
     }
-
-    $confirmation_tab = "width=400, height=300, scrollbars=yes, noopener=yes";
-    //     ini_set('display_errors', 1);
-    // $db->setAttribute(pdo::ATTR_ERRMODE,pdo::ERRMODE_EXCEPTION);
-    // $db->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
-    // echo "<br>";
-    // var_dump($table);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -93,7 +88,7 @@
                             <p style="white-space:pre-wrap;"><?php echo htmlspecialchars($post['message'], ENT_QUOTES); ?></p>
                             <p><span>[<a href="index.php?res=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>">返信</a>]</span>
                             <?php if($_SESSION['id'] === $post['user_id']): ?>
-                                <span class="day"><?php htmlspecialchars($post['created'], ENT_QUOTES); ?>[<a href="delete.php?id=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>" onclick="window.open(this, '削除', <?php $confirmation_tab; ?>)return false;">削除</a>]</span></p>
+                                <span class="day"><?php htmlspecialchars($post['created'], ENT_QUOTES); ?>[<a href="delete.php?id=<?php echo htmlspecialchars($post['id'], ENT_QUOTES); ?>" onclick="delete_win(this.href, '削除', 400, 300); return false;">削除</a>]</span></p>
                             <?php endif ?>
                             <?php if($post['id'] === $table['id']): ?>
                                 <div class="add_post">
@@ -150,5 +145,25 @@
 
     </div>
 
+    <script type="text/javascript">
+        function delete_win(url, windowname, width, height) {
+            var features = "location=no, menubar=no, status=yes, scrollbars=yes, resizable=yes, toolbar=no";
+            if (width) {
+                if (window.screen.width > width)
+                    features += ", left=" + (window.screen.width-width) / 2;
+                else
+                    width = window.screen.width;
+                    features += ", width=" + width;
+            }
+            if (height) {
+                if (window.screen.height > height)
+                    features += ", top=" + (window.screen.height-height) / 2;
+                else
+                    height = window.screen.height;
+                    features += ", height=" + height;
+            }
+            window.open(url, windowname, features);
+        }
+    </script>
 </body>
 </html>

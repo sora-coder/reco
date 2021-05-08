@@ -16,15 +16,10 @@
             $delete = $db->prepare('UPDATE message SET deleted=1 WHERE id=?');
             $delete->bindParam(1, $sentence['id'], PDO::PARAM_INT);
             $delete->execute();
-            header('location: index.php');
-            exit();
-        }elseif(isset($_POST['back'])){
-            header('location: index.php');
-            exit();
+            $close = 'delete';
         }
     }
-    var_dump($_SESSION);
-?>
+    ?>
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -35,17 +30,39 @@
     <title>削除</title>
 </head>
 <body>
-    <div>
-        <p><?php echo htmlspecialchars($sentence['id'], ENT_QUOTES), '.', htmlspecialchars($sentence['message'], ENT_QUOTES); ?></p>
-    </div>
-    <div>
-        <p>削除しますか？</p>
-    </div>
-    <div>
-        <form action="" method="post">
-            <input type="submit" name="delete" value="削除する">
-            <input type="submit" name="back" value="戻る">
-        </form>
-    </div>
+    <?php if($close !== 'delete'): ?>
+        <div>
+            <p><?php echo htmlspecialchars($sentence['id'], ENT_QUOTES), '.', htmlspecialchars($sentence['message'], ENT_QUOTES); ?></p>
+        </div>
+        <div>
+            <p>削除しますか？</p>
+        </div>
+        <div>
+            <form action="" method="post">
+                <input type="submit" name="delete" value="削除する">
+                <input type="submit" value="戻る" onclick="win_close();return false;">
+            </form>
+        </div>
+    <?php else: ?>
+        <div>
+            <p>削除しました</p>
+        </div>
+        <div>
+            <form>
+                <input type="submit" value="戻る" onclick="win_close_delete();return false;">
+            </form>
+        </div>
+    <?php endif; ?>
+
+    <script type="text/javascript">
+        function win_close(){
+            open(location, '_self').close();
+        }
+
+        function win_close_delete(){
+            window.opener.location.href = "index.php?page=<?php echo htmlspecialchars($_SESSION['page'], ENT_QUOTES); ?>";
+            open(location, '_self').close();
+        }
+    </script>
 </body>
 </html>
